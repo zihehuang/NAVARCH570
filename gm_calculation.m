@@ -7,16 +7,16 @@ function [GM,VCG,VCB] = gm_calculation(W_flat,W_base,W_tip, W_cone,W_ballast,T1,
 %  to understand stability characteristics
 
 %% Constants
-rho_sw = 1025; %density of salt water, kg/m^3
-rho_st = 7810; %density of steel
-rho_b = 2400; %density of ballast, kg/m^3
-g = 9.82; %gravitational accel, m/s^2
+c = constants.WindTurbineConstants;
+rho_sw = c.rho_sw; %density of salt water, kg/m^3
+rho_b = c.rho_b; %density of ballast, kg/m^3
+g = c.g; %gravitational accel, m/s^2
 
-m_tower = 550*1000; %Mass of tower in kg
-cg_t = 65;          %CoG of tower above the waterline
+m_tower = c.t_ma; %Mass of tower in kg
+cg_t = c.cg_t;          %CoG of tower above the waterline
 
-m_rna = 660*1000;   %Mass of rotor nacelle assy in kg
-cg_r = 120;         %CoG of rotor nacelle assy above the waterline
+m_rna = c.r_n_g_ma;   %Mass of rotor nacelle assy in kg
+cg_r = c.towerheight;         %CoG of rotor nacelle assy above the waterline
 
 r1 = D1/2;   %Radius 1
 r2 = D2/2;   %Radius 2

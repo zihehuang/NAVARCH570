@@ -1,19 +1,35 @@
 function main()
-    c = constants.WindTurbineConstants;
-    D1 = [20, 30];
-    D2 = [8, 10];
-    T1 = [35, 40];
-    T2 = [15, 20];
+    D1_limit = [20, 30];
+    D2_limit = [4, 8];
+    T1_limit = [35, 40];
+    T2_limit = [15, 20];
     coded = ccdesign(4, 'center', 1);
-    samples = convertValues([D1; D2; T1; T2], coded);
+    samples = convertValues([D1_limit; D2_limit; T1_limit; T2_limit], coded);
+    D1 = samples(:,1);
+    D2 = samples(:,2);
+    T1 = samples(:,3);
+    T2 = samples(:,4);
     
     [t1, t2, wt_cone, wt_ballast,wt_cyl,wt_trans,wt_bottom,...
-    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht] = ...
-        weights_thickness(samples(:,1),samples(:,2),samples(:,3),samples(:,4));
+    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht_ballast] = ...
+        weights_thickness(D1,D2,T1,T2);
     wt_tot = wt_cone+wt_cyl+wt_bottom+wt_trans;
+    ballast_cog = -(samples(:,3)+samples(:,4)-ht_ballast./2);
     [GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,wt_trans,wt_cone,wt_ballast,...
-        samples(:,3),samples(:,4),samples(:,1),samples(:,2),t1,t2);
-    disp(wt_cone)
+        T1,T2,D1,D2,t1,t2);
+    
+    pitch_vec = zeros(size(samples,1),1);
+    period_vec = zeros(size(samples,1),1);
+    for i = 1:size(samples,1)
+        [pitchoffset, period] = dynamic_analysis(wt_tot(i,:), VCG(i,:),...
+		VCB(i,:), samples(i,1), samples(i,2), samples(i,3),...
+		samples(i,4), t1(i,:), t2(i,:), wt_ballast(i,:),...
+		ballast_cog(i,:), ht_ballast(i,:), wt_cone(i,:), wt_cyl(i,:), 0, 0);
+        pitch_vec(i,:) = pitchoffset;
+        period_vec(i,:) = period;
+    end
+    
+    disp(wt_cone, GM, pitch_vec, period_vec)
 end
 
 % for each column in the coded level matrix
@@ -26,7 +42,6 @@ function samples = convertValues(all_levels, all_coded)
         coded = all_coded(:,i);
         min_orig = min(levels);
         max_orig = max(levels);
-        avg = mean([min_orig max_orig]);
         half_range = (max_orig - min_orig) / 2;
         samples(:,i) = (coded + 1) .* half_range + min_orig;
     end
