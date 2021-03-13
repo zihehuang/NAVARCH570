@@ -9,12 +9,12 @@ function main()
     D2 = samples(:,2);
     T1 = samples(:,3);
     T2 = samples(:,4);
-    
+
     [t1, t2, wt_cone, wt_ballast,wt_cyl,wt_trans,wt_bottom,...
     vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht_ballast] = ...
         weights_thickness(D1,D2,T1,T2);
     wt_tot = wt_cone+wt_cyl+wt_bottom+wt_trans;
-    ballast_cog = -(samples(:,3)+samples(:,4)-ht_ballast./2);
+    cog_ballast = -(T1+T2-ht_ballast./2);
     [GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,wt_trans,wt_cone,wt_ballast,...
         T1,T2,D1,D2,t1,t2);
     
@@ -24,12 +24,16 @@ function main()
         [pitchoffset, period] = dynamic_analysis(wt_tot(i,:), VCG(i,:),...
 		VCB(i,:), samples(i,1), samples(i,2), samples(i,3),...
 		samples(i,4), t1(i,:), t2(i,:), wt_ballast(i,:),...
-		ballast_cog(i,:), ht_ballast(i,:), wt_cone(i,:), wt_cyl(i,:), 0, 0);
+		cog_ballast(i,:), ht_ballast(i,:), wt_cone(i,:), wt_cyl(i,:), 0, 0);
+    
         pitch_vec(i,:) = pitchoffset;
         period_vec(i,:) = period;
     end
     
-    disp(wt_cone, GM, pitch_vec, period_vec)
+    wt_cone
+    GM
+    pitch_vec
+    period_vec
 end
 
 % for each column in the coded level matrix

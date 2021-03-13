@@ -1,4 +1,4 @@
-function[pitchoffset, naturalperiod] = dynamic_analysis(wt_tot, CoGtotal, CoBtotal, D1, D2, T1, T2, thickness1, thickness2, ballastWeight, ballastCoG, ballastHeight, coneWeight, cylinderWeight, coneCoG, cylinderCoG)
+function[pitchoffset, naturalperiod] = dynamic_analysis(wt_tot, cog_total, cob_total, D1, D2, T1, T2, thickness1, thickness2, wt_ballast, cog_ballast, ht_ballast, wt_cone, wt_cyl, cog_cone, cog_cylinder)
 c = constants.WindTurbineConstants;
 kmoor = c.k_moor;
 rhosw = c.rho_sw;
@@ -12,22 +12,25 @@ masstotal = wt_tot / g;
 
 % please input all parameters in standard SI units
 Iwp = pi/4*(D2/2)^4; % second area of waterplane
-k33 = rhosw*g*Iwp - masstotal*g*CoGtotal + masstotal*g*CoBtotal + kmoor*CoGtotal^2; %lengthy k33 eq
-k = [kmoor 0 kmoor*CoGtotal; 0 (rhosw*g*pi*D2^2)/4 0; kmoor*CoGtotal 0 k33]; %k matrix
+k33 = rhosw*g*Iwp - masstotal*g*cog_total + masstotal*g*cob_total + kmoor*cog_total^2; %lengthy k33 eq
+k = [kmoor 0 kmoor*cog_total;
+    0 (rhosw*g*pi*D2^2)/4 0;
+    kmoor*cog_total 0 k33]; %k matrix
 k_inv = inv(k);
 
-pitchoffset = k_inv(3,1)*design_thrust + k_inv(3,3)*design_thrust*towerheight; %pitch offset at steady state (0 acceleration)
+pitchoffset_rad = k_inv(3,1)*design_thrust + k_inv(3,3)*design_thrust*towerheight; %pitch offset at steady state (0 acceleration)
+pitchoffset = rad2deg(pitchoffset_rad);
 
 % Calculating turbine moment of inertia about total CoG
-Iturbine = turbine_mass*(towerheight-CoGtotal)^2; %turbine is point mass
-Itower = tower_mass/3*(towerheight)^2 +tower_mass*(CoGtotal)^2; %tower is slender cylinder
-Icone = 1/12*coneWeight*(3*(((D1+D2)/4)^2+((D1+D2)/4-thickness2)^2)+T2^2)+coneWeight*(coneCoG-CoGtotal)^2; %cone as hollow cylinder with diamter as average of D1 and D2
-Icylinder = 1/12*cylinderWeight*(3*((D1/2)^2+(D1/2-thickness1)^2)+T1^2)+cylinderWeight*(cylinderCoG-CoGtotal)^2; % cylinder as hollow cylinder diameter D1
-Iballast = 1/12*ballastWeight*(3*(D1/2)^2+ballastHeight^2) + ballastWeight*(ballastCoG-CoGtotal)^2; %ballast as solid cylinder, need how higher the ballast will go in the cylinder
+Iturbine = turbine_mass*(towerheight-cog_total)^2; %turbine is point mass
+Itower = tower_mass/3*(towerheight)^2 +tower_mass*(cog_total)^2; %tower is slender cylinder
+Icone = 1/12*wt_cone*(3*(((D1+D2)/4)^2+((D1+D2)/4-thickness2)^2)+T2^2)+wt_cone*(cog_cone-cog_total)^2; %cone as hollow cylinder with diamter as average of D1 and D2
+Icylinder = 1/12*wt_cyl*(3*((D1/2)^2+(D1/2-thickness1)^2)+T1^2)+wt_cyl*(cog_cylinder-cog_total)^2; % cylinder as hollow cylinder diameter D1
+Iballast = 1/12*wt_ballast*(3*(D1/2)^2+ht_ballast^2) + wt_ballast*(cog_ballast-cog_total)^2; %ballast as solid cylinder, need how higher the ballast will go in the cylinder
 
 ItotCoG = Iturbine + Itower + Icone + Icylinder + Iballast; % moment of inertia about total CoG
-ItotWl = ItotCoG + masstotal*(CoGtotal)^2; % moment of inertia about waterline
-Mdry = [masstotal 0 masstotal*CoGtotal; 0 masstotal 0; masstotal*CoGtotal 0 ItotWl]; %mass matrix
+ItotWl = ItotCoG + masstotal*(cog_total)^2; % moment of inertia about waterline
+Mdry = [masstotal 0 masstotal*cog_total; 0 masstotal 0; masstotal*cog_total 0 ItotWl]; %mass matrix
 
 %added mass calcs
 addedMass2DD1 = rhosw*pi*D1^2/4;

@@ -1,4 +1,4 @@
-function [GM,VCG,VCB] = gm_calculation(W_flat,W_base,W_tip, W_cone,W_ballast,T1,T2,D1,D2,t1,t2)
+function [GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,w_trans,wt_cone,wt_ballast,T1,T2,D1,D2,t1,t2)
 %GM calculator - NA 570 - Winter 2021 - Wind tubine project
 %  Function to calculate the GM values for the variations of T1, T2, D1
 %  D2, t1, t2. This function finds the vertical center of gravity (VCG),
@@ -22,19 +22,19 @@ r1 = D1/2;   %Radius 1
 r2 = D2/2;   %Radius 2
 
 %% Height of concrete and draft volume
-H_concrete = (W_ballast/(rho_b*g))./(pi*((r1-t1).^2)); %Height of concrete ballast in base
+H_concrete = (wt_ballast/(rho_b*g))./(pi*((r1-t1).^2)); %Height of concrete ballast in base
 V_draft = pi*r1.^2.*T1 + 1/3*pi*T2.*(r1.^2+r1.*r2+r2.^2); %Volume of the spar
 
 %% VCG, VCB, and GM
 
-WM_flat = (W_flat/g).*(-(T1+T2));      %Weight Moment of steel - bottom flat plate
-WM_base = (W_base/g).*(-(T2+(T1/2)));  %Weight Moment of steel - base cylinder
-WM_tip = (W_tip/g)*5;                 %Weight Moment of steel - top cylinder
+WM_flat = (wt_bottom/g).*(-(T1+T2));      %Weight Moment of steel - bottom flat plate
+WM_base = (wt_cyl/g).*(-(T2+(T1/2)));  %Weight Moment of steel - base cylinder
+WM_tip = (w_trans/g)*5;                 %Weight Moment of steel - top cylinder
 
 Zsurf = (((T2.^2)*pi.*(2*r2+r1))/3)./(pi*(r1+r2).*sqrt(((r1-r2).^2)+(T2.^2)));  %Center of area for cone
-WM_cone = W_cone.*(Zsurf-T2);      %Weight Moment of steel - cone
+WM_cone = wt_cone.*(Zsurf-T2);      %Weight Moment of steel - cone
 
-WM_total = WM_flat + WM_base + WM_tip + WM_cone + m_tower*cg_t + m_rna*cg_r + (W_ballast/g).*(-(T2+T1-(H_concrete/2)));
+WM_total = WM_flat + WM_base + WM_tip + WM_cone + m_tower*cg_t + m_rna*cg_r + (wt_ballast/g).*(-(T2+T1-(H_concrete/2)));
 %WM_total = WM_flat + WM_base + WM_tip + WM_cone + m_tower*cg_t + m_rna*cg_r + (w_concrete/g)*(-(T2+T1-(H_concrete/2)));
 
 VCG = WM_total./(V_draft*rho_sw);    %Vertical Center of Gravity
