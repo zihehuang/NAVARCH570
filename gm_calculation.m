@@ -1,4 +1,4 @@
-function [GM,VCG,VCB] = GM_Calc(W_flat,W_base,W_tip, W_cone,W_ballast,T1,T2,D1,D2,t1,t2)
+function [GM,VCG,VCB] = gm_calculation(W_flat,W_base,W_tip, W_cone,W_ballast,T1,T2,D1,D2,t1,t2)
 %GM calculator - NA 570 - Winter 2021 - Wind tubine project
 %  Function to calculate the GM values for the variations of T1, T2, D1
 %  D2, t1, t2. This function finds the vertical center of gravity (VCG),

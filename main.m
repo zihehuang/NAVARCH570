@@ -11,6 +11,8 @@ function main()
     vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht] = ...
         weights_thickness(samples(:,1),samples(:,2),samples(:,3),samples(:,4));
     wt_tot = wt_cone+wt_cyl+wt_bottom+wt_trans;
+    [GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,wt_trans,wt_cone,wt_ballast,...
+        samples(:,3),samples(:,4),samples(:,1),samples(:,2),t1,t2);
     disp(wt_cone)
 end
 
