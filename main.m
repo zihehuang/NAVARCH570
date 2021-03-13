@@ -1,15 +1,16 @@
 function main()
     c = constants.WindTurbineConstants;
-    D1 = [10, 20];
-    D2 = [4, 8];
-    T1 = [20, 40];
-    T2 = [10, 20];
+    D1 = [20, 30];
+    D2 = [8, 10];
+    T1 = [35, 40];
+    T2 = [15, 20];
     coded = ccdesign(4, 'center', 1);
     samples = convertValues([D1; D2; T1; T2], coded);
     
     [t1, t2, wt_cone, wt_ballast,wt_cyl,wt_trans,wt_bottom,...
-    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans] = ...
+    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht] = ...
         weights_thickness(samples(:,1),samples(:,2),samples(:,3),samples(:,4));
+    wt_tot = wt_cone+wt_cyl+wt_bottom+wt_trans;
     disp(wt_cone)
 end
 

@@ -58,6 +58,6 @@ wt_ballast = vspar.*c.rho_sw.*g - wt_tot-t_ma.*g-r_n_g_ma.*g;
 vol_ballast = wt_ballast./(c.rho_b.*g);
 
 %Height of Ballast
-height_ballast = vol_ballast./(g.*c.rho_b.*pi.*R1^2);
+height_ballast = vol_ballast./(g.*c.rho_b.*pi.*R1.^2);
 end
 
