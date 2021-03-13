@@ -1,5 +1,5 @@
 function [t1, t2, wt_cone, wt_ballast,wt_cyl,wt_trans,wt_bottom,...
-    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans] = weights_thickness(D1, D2, T1, T2)
+    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, height_ballast] = weights_thickness(D1, D2, T1, T2)
 %This function takes in D1, D2, T1, T2 and calculates thicknesses t1 and
 %t2.  Then calculates the wegith of the steel components and the weight of ballast
 c = constants.WindTurbineConstants;
@@ -56,5 +56,8 @@ vol_tot = wt_tot./(c.rho_st.*g); %for checking
 vspar = pi.*R1.^2.*T1 +1/3.*pi.*T2.*(R1.^2+R1.*R2+R2.^2);
 wt_ballast = vspar.*c.rho_sw.*g - wt_tot-t_ma.*g-r_n_g_ma.*g; 
 vol_ballast = wt_ballast./(c.rho_b.*g);
+
+%Height of Ballast
+height_ballast = vol_ballast./(g.*c.rho_b.*pi.*R1^2);
 end
 
