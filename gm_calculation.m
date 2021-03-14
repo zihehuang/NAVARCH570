@@ -1,4 +1,4 @@
-function [GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,w_trans,wt_cone,wt_ballast,T1,T2,D1,D2,t1,t2)
+function [GM,VCG,VCB,VCG_cone,VCG_cyl] = gm_calculation(wt_bottom,wt_cyl,w_trans,wt_cone,wt_ballast,T1,T2,D1,D2,t1,t2)
 %GM calculator - NA 570 - Winter 2021 - Wind tubine project
 %  Function to calculate the GM values for the variations of T1, T2, D1
 %  D2, t1, t2. This function finds the vertical center of gravity (VCG),
@@ -27,22 +27,22 @@ V_draft = pi*r1.^2.*T1 + 1/3*pi*T2.*(r1.^2+r1.*r2+r2.^2); %Volume of the spar
 
 %% VCG, VCB, and GM
 
+VCG_cyl = -(T2+(T1/2))
+
 WM_flat = (wt_bottom/g).*(-(T1+T2));      %Weight Moment of steel - bottom flat plate
 WM_base = (wt_cyl/g).*(-(T2+(T1/2)));  %Weight Moment of steel - base cylinder
 WM_tip = (w_trans/g)*5;                 %Weight Moment of steel - top cylinder
 
-Zsurf = (((T2.^2)*pi.*(2*r2+r1))/3)./(pi*(r1+r2).*sqrt(((r1-r2).^2)+(T2.^2)));  %Center of area for cone
-WM_cone = wt_cone.*(Zsurf-T2);      %Weight Moment of steel - cone
+VCG_cone = ((pi*(2*r2+r1).*sqrt(((r1-r2).^2).*(T2.^2)+(T2.^4)))/3)./(pi*(r1+r2).*sqrt(((r1-r2).^2)+(T2.^2)));  %Center of area for cone
+WM_cone = (wt_cone/g).*(VCG_cone-T2);      %Weight Moment of steel - cone
 
-WM_total = WM_flat + WM_base + WM_tip + WM_cone + m_tower*cg_t + m_rna*cg_r + (wt_ballast/g).*(-(T2+T1-(H_concrete/2)));
-%WM_total = WM_flat + WM_base + WM_tip + WM_cone + m_tower*cg_t + m_rna*cg_r + (w_concrete/g)*(-(T2+T1-(H_concrete/2)));
+WM_total = WM_flat + WM_base + WM_tip + WM_cone + (m_tower*cg_t) + (m_rna*cg_r) + (wt_ballast/g).*((-T2-T1)+(H_concrete/2));
 
 VCG = WM_total./(V_draft*rho_sw);    %Vertical Center of Gravity
-%VCG = WM_total/(w_draft/g)    %Vertical Center of Gravity
 
-Z_conebase = (T2.*((r1.^2)+(2*r1.*r2)+3*(r2.^2)))./(4*((r1.^2)+(r1.*r2)+(r2.^2)));
+VCB_cone = (T2.*((r1.^2)+(2*r1.*r2)+3*(r2.^2)))./(4*((r1.^2)+(r1.*r2)+(r2.^2))); %Vertical Center of Boyancy of the Cone 
 
-VCB_mom = pi*(r1.^2).*T1.*(-T2-(T1/2))+(pi/3)*T2.*((r2.^2)+(r1.*r2)+(r2.^2)).*(Z_conebase-T2);
+VCB_mom = (pi*(r1.^2)).*T1.*(-T2-(T1/2))+((pi/3)*T2).*((r1.^2)+(r1.*r2)+(r2.^2)).*(VCB_cone-T2);
 
 VCB = VCB_mom./V_draft;    %Vertical center of boyancy
 
