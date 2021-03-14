@@ -27,7 +27,7 @@ V_draft = pi*r1.^2.*T1 + 1/3*pi*T2.*(r1.^2+r1.*r2+r2.^2); %Volume of the spar
 
 %% VCG, VCB, and GM
 
-VCG_cyl = -(T2+(T1/2))
+VCG_cyl = -(T2+(T1/2));
 
 WM_flat = (wt_bottom/g).*(-(T1+T2));      %Weight Moment of steel - bottom flat plate
 WM_base = (wt_cyl/g).*(-(T2+(T1/2)));  %Weight Moment of steel - base cylinder
