@@ -40,9 +40,10 @@ WM_total = WM_flat + WM_base + WM_tip + WM_cone + (m_tower*cg_t) + (m_rna*cg_r) 
 
 VCG = WM_total./(V_draft*rho_sw);    %Vertical Center of Gravity
 
-VCB_cone = (T2.*((r1.^2)+(2*r1.*r2)+3*(r2.^2)))./(4*((r1.^2)+(r1.*r2)+(r2.^2))); %Vertical Center of Boyancy of the Cone 
+Z_cone = (T2.*((r1.^2)+(2*r1.*r2)+3*(r2.^2)))./(4*((r1.^2)+(r1.*r2)+(r2.^2))); %Vertical Center of Boyancy of the Cone from cone base 
+VCB_cone = (Z_cone-T2);  %Vertical Center of Boyancy of the Cone from waterline
 
-VCB_mom = (pi*(r1.^2)).*T1.*(-T2-(T1/2))+((pi/3)*T2).*((r1.^2)+(r1.*r2)+(r2.^2)).*(VCB_cone-T2);
+VCB_mom = (pi*(r1.^2)).*T1.*(-T2-(T1/2))+((pi/3)*T2).*((r1.^2)+(r1.*r2)+(r2.^2)).*(Z_cone-T2);
 
 VCB = VCB_mom./V_draft;    %Vertical center of boyancy
 
