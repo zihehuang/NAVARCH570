@@ -1,10 +1,43 @@
 function main()
-    D1_limit = [20, 30];
-    D2_limit = [4, 8];
-    T1_limit = [35, 40];
+    D1_limit = [20, 40];
+    D2_limit = [4, 16];
+    T1_limit = [35, 50];
     T2_limit = [15, 20];
     coded = ccdesign(4, 'center', 1);
-    samples = convertValues([D1_limit; D2_limit; T1_limit; T2_limit], coded);
+    samples = convert_values([D1_limit; D2_limit; T1_limit; T2_limit], coded);
+    
+    [GM, pitch_vec, period_vec, wt_tot] = calc_output(samples);
+    
+    do_regression(samples, GM, pitch_vec, period_vec, wt_tot);
+end
+
+function do_regression(samples, GM, pitch_vec, period_vec, wt_tot)
+    D1 = samples(:,1);
+    D2 = samples(:,2);
+    T1 = samples(:,3);
+    T2 = samples(:,4);
+    wt_tbl = table(wt_tot,D1,D2,T1,T2,...
+    'VariableNames',{'TotalWeight','D1','D2','T1','T2'});
+    disp(fitlm(wt_tbl,'TotalWeight ~ D1 + D2 + T1 + T2'));
+    % Add quadratic and cross terms
+    wt_tbl = table(wt_tot,D1,D2,T1,T2,...
+        'VariableNames',{'TotalWeight','D1','D2','T1','T2'});
+    disp(fitlm(wt_tbl,'TotalWeight ~ D1^2 + D2^2 + T1^2 + T2^2 + D1:D2'));
+
+    pitch_tbl = table(pitch_vec,D1,D2,T1,T2,...
+        'VariableNames',{'PitchOffset','D1','D2','T1','T2'});
+    disp(fitlm(pitch_tbl,'PitchOffset ~ D1 + D2 + T1 + T2'));
+    
+    period_tbl = table(period_vec,D1,D2,T1,T2,...
+        'VariableNames',{'Period','D1','D2','T1','T2'});
+    disp(fitlm(period_tbl,'Period ~ D1 + D2 + T1 + T2'));
+    
+    gm_tbl = table(GM,D1,D2,T1,T2,...
+        'VariableNames',{'GM','D1','D2','T1','T2'});
+    disp(fitlm(gm_tbl,'GM ~ D1 + D2 + T1 + T2'));
+end
+
+function [GM, pitch_vec, period_vec, wt_tot] = calc_output(samples)
     D1 = samples(:,1);
     D2 = samples(:,2);
     T1 = samples(:,3);
@@ -29,16 +62,11 @@ function main()
         pitch_vec(i,:) = pitchoffset;
         period_vec(i,:) = period;
     end
-    
-    wt_cone
-    GM
-    pitch_vec
-    period_vec
 end
 
 % for each column in the coded level matrix
 % convert coded level to actual level
-function samples = convertValues(all_levels, all_coded)
+function samples = convert_values(all_levels, all_coded)
     [m, n] = size(all_coded);
     samples = zeros(m,n);
     for i = 1:n
@@ -51,3 +79,4 @@ function samples = convertValues(all_levels, all_coded)
     end
     samples(samples(:,2) > samples(:,1), :) = []; % D2 cant be greater than D1
 end
+
