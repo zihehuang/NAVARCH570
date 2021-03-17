@@ -1,4 +1,4 @@
-function[R_squared, adj_R_squared, sigmasq] = polyfit_error(yval, yhat, X_fit)
+function[R_squared, adj_R_squared, sigmasq,tvals] = polyfit_error(yval, yhat, X_fit,b)
     %inputs yval, actual calculated y values
     %yhat, y values evaluated from the polyfit
     %X_fit, Xfit matrix (25x11 for Mar 16 17)
@@ -16,5 +16,8 @@ function[R_squared, adj_R_squared, sigmasq] = polyfit_error(yval, yhat, X_fit)
     SS_regress = SS_total-SSE;
     R_squared = SS_regress/SS_total;
     adj_R_squared = 1-(n-1)/(n-p)*(1-R_squared);
+    c = inv(X_fit'*X_fit);
+    cdiag = diag(c);
+    tvals = b./sqrt(sigmasq.*cdiag);
 end
     
