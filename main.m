@@ -1,11 +1,11 @@
 function main()
-    D1_limit = [20, 40];
-    D2_limit = [4, 16];
+    D1_limit = [35, 45];
+    D2_limit = [15, 25];
     T1_limit = [35, 50];
-    T2_limit = [15, 20];
+    T2_limit = [10, 25];
     coded = ccdesign(4, 'center', 1);
     samples = convert_values([D1_limit; D2_limit; T1_limit; T2_limit], coded);
-    
+    disp(samples);
     [GM, pitch_vec, period_vec, wt_tot] = calc_output(samples);
     
     do_regression(samples, GM, pitch_vec, period_vec, wt_tot);
@@ -18,19 +18,20 @@ function do_regression(samples, GM, pitch_vec, period_vec, wt_tot)
     T2 = samples(:,4);
     wt_tbl = table(wt_tot,D1,D2,T1,T2,...
     'VariableNames',{'TotalWeight','D1','D2','T1','T2'});
-    disp(fitlm(wt_tbl,'TotalWeight ~ D1 + D2 + T1 + T2'));
+    %disp(fitlm(wt_tbl,'TotalWeight ~ D1 + D2 + T1 + T2'));
     % Add quadratic and cross terms
     wt_tbl = table(wt_tot,D1,D2,T1,T2,...
         'VariableNames',{'TotalWeight','D1','D2','T1','T2'});
-    disp(fitlm(wt_tbl,'TotalWeight ~ D1^2 + D2^2 + T1^2 + T2^2 + D1:D2'));
+    disp(fitlm(wt_tbl,'TotalWeight ~ D1 + D2+ T1 + T2 + D1:T1 '));
 
     pitch_tbl = table(pitch_vec,D1,D2,T1,T2,...
         'VariableNames',{'PitchOffset','D1','D2','T1','T2'});
-    disp(fitlm(pitch_tbl,'PitchOffset ~ D1 + D2 + T1 + T2'));
+    %disp(fitlm(pitch_tbl,'PitchOffset ~ D1 + D2 + T1 + T2'));
+    disp(fitlm(pitch_tbl,'PitchOffset ~ D1 + D2 + T1 + T2 + T1^2 + T1:T2'));
     
     period_tbl = table(period_vec,D1,D2,T1,T2,...
         'VariableNames',{'Period','D1','D2','T1','T2'});
-    disp(fitlm(period_tbl,'Period ~ D1 + D2 + T1 + T2'));
+    disp(fitlm(period_tbl,'Period ~ D1 + D2 + T1 + T2 +D2^2'));
     
     gm_tbl = table(GM,D1,D2,T1,T2,...
         'VariableNames',{'GM','D1','D2','T1','T2'});
