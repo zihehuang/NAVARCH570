@@ -1,0 +1,40 @@
+%variable ranges
+D1 = [35, 45];
+D2 = [15, 25];
+T1 = [35; 50];
+T2 = [10, 25];
+
+%Swarm Creation
+n = 50;    %Number of particles in swarm
+rD1 = rand(n,1).*(D1(2)-D1(1))+D1(1);
+rD2 = rand(n,1).*(D2(2)-D2(1))+D2(1);
+rT1 = rand(n,1).*(T1(2)-T1(1))+T1(1);
+rT2 = rand(n,1).*(T2(2)-T2(1))+T2(1);
+
+swarm =[rD1 rD2 rT1 rT2];
+
+%%iterate through while loop checking converged condition
+% while ..... 
+[t1, t2, wt_cone, wt_ballast,wt_cyl,wt_trans,wt_bottom,...
+    vol_cone,vol_ballast, vol_bottom, vol_cyl, vol_trans, ht_ballast] = ...
+    weights_thickness(swarm(:,1),swarm(:,2),swarm(:,3),swarm(:,4));
+wt_st = wt_cone+wt_cyl+wt_bottom+wt_trans;
+cog_ballast = -(swarm(:,3)+swarm(:,4)-ht_ballast./2);
+[GM,VCG,VCB] = gm_calculation(wt_bottom,wt_cyl,wt_trans,wt_cone,wt_ballast,...
+    swarm(:,1),swarm(:,2),swarm(:,3),swarm(:,4),t1,t2);
+for i = 1:size(swarm,1)
+    [pitchoffset, period] = dynamic_analysis(wt_st(i,:), VCG(i,:),...
+        VCB(i,:), swarm(i,1),swarm(i,2),swarm(i,3),swarm(i,4), t1(i,:), t2(i,:), wt_ballast(i,:),...
+        cog_ballast(i,:), ht_ballast(i,:), wt_cone(i,:), wt_cyl(i,:), 0, 0);
+    
+    pitch_vec(i,:) = pitchoffset;
+    period_vec(i,:) = period;
+end
+
+cost = (wt_st + .05*wt_ballast)./g;
+
+%if statement checking conditions
+%if not passing add +100000 to cost
+
+% velo =
+% position = 
