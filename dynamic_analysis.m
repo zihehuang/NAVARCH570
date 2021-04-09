@@ -1,4 +1,4 @@
-function[pitchoffset, naturalperiod] = dynamic_analysis(wt_tot, cog_total, cob_total, D1, D2, T1, T2, thickness1, thickness2, wt_ballast, cog_ballast, ht_ballast, wt_cone, wt_cyl, cog_cone, cog_cylinder)
+function[pitchoffset, naturalperiod1, naturalperiod2, naturalperiod3] = dynamic_analysis(wt_tot, cog_total, cob_total, D1, D2, T1, T2, thickness1, thickness2, wt_ballast, cog_ballast, ht_ballast, wt_cone, wt_cyl, cog_cone, cog_cylinder)
 c = constants.WindTurbineConstants;
 kmoor = c.k_moor;
 rhosw = c.rho_sw;
@@ -40,6 +40,8 @@ Madded13 = addedMass2DD2*(T2/2)*(T2/4) + addedMass2DD1*(T2/2)*(3*T2/4)+addedMass
 Madded33 = addedMass2DD2*(T2/2)*(T2/4)^2 + addedMass2DD1*(T2/2)*(3*T2/4)^2+addedMass2DD1*(T1/4)*((T2+T1/8)^2+(T2+3*T1/8)^2+(T2+5*T1/8)^2+(T2+7*T1/8)^2); %discretized added mass times moment arm squared
 Madded = [Madded11 0 Madded13; 0 rhosw*g*pi*D1^3/12 0; Madded13 0 Madded33]; %added mass matrix
 Mtotal = Mdry + Madded;
-[V, D] = eig(k(2,2), Mtotal(2,2));
-naturalperiod = (2*pi)./(D.^(0.5)); % heave natural period
+[V, D] = eig(k, Mtotal);
+naturalperiod1 = (2*pi)./(D(1,1).^(0.5)); % one natural period (s)
+naturalperiod2 = (2*pi)./(D(2,2).^(0.5)); % one natural period (s)
+naturalperiod3 = (2*pi)./(D(3,3).^(0.5)); % one natural period (s)
 end
