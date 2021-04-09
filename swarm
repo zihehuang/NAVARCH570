@@ -1,3 +1,6 @@
+clear all, close all
+c = constants.WindTurbineConstants;
+
 %variable ranges
 D1 = [35, 45];
 D2 = [15, 25];
@@ -29,12 +32,15 @@ for i = 1:size(swarm,1)
     
     pitch_vec(i,:) = pitchoffset;
     period_vec(i,:) = period;
+    
+    %Check if boundary conditions are violated element by element
+    if period <=25 || pitchoffset > 8 || GM(i)<=0 || wt_ballast(i)<0 
+        add_cost(i,1) = 100000000;
+    end
 end
 
-cost = (wt_st + .05*wt_ballast)./g;
+cost = (wt_st + .05*wt_ballast)./c.g +add_cost;
 
-%if statement checking conditions
-%if not passing add +100000 to cost
 
 % velo =
 % position = 
