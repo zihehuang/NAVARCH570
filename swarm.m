@@ -1,3 +1,4 @@
+function swarm
 clear all, close all
 c = constants.WindTurbineConstants;
 
@@ -86,3 +87,4 @@ end
 %Add G_best marker to 3D scatter plot, change marker characteristics to highlight location
 scatter3(gbest(1,1)*gbest(1,3),gbest(1,2)*gbest(1,4),cost_gbest(1,1),'MarkerEdgeColor','k','MarkerFaceColor',[0 .75 .75])
 hold off
+end
