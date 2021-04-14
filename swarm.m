@@ -84,7 +84,18 @@ while max(std(swarm)) > .01
     tracker(j,:) = max(velo);
 end
 
+%Output final global optimum dimensions and related cost
+display('***************************************************************************************************')
+display('The final global optimum dimension matrix in the form of [D1 D2 T1 T2] is:')
+Final_Gbest = gbest
+display('The cost of the global optimum construction is:')
+Final_Cost = cost_gbest
+
 %Add G_best marker to 3D scatter plot, change marker characteristics to highlight location
 scatter3(gbest(1,1)*gbest(1,3),gbest(1,2)*gbest(1,4),cost_gbest(1,1),'MarkerEdgeColor','k','MarkerFaceColor',[0 .75 .75])
+title('Scatter Plot of Spar Cost Over the Design Space')
+xlabel('D1*T1')
+ylabel('D2*T2')
+zlabel('Cost')
 hold off
 end
